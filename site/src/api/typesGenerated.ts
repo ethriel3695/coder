@@ -1631,6 +1631,13 @@ export const RBACResources: RBACResource[] = [
   "workspace_proxy",
 ]
 
+// From codersdk/workspaceagentconn.go
+export type ReconnectingPTYBackendType = "buffered" | "screen"
+export const ReconnectingPTYBackendTypes: ReconnectingPTYBackendType[] = [
+  "buffered",
+  "screen",
+]
+
 // From codersdk/audit.go
 export type ResourceType =
   | "api_key"

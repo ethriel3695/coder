@@ -193,13 +193,22 @@ func (c *WorkspaceAgentConn) Close() error {
 	return c.Conn.Close()
 }
 
+type ReconnectingPTYBackendType string
+
+const (
+	ReconnectingPTYBackendTypeAuto     ReconnectingPTYBackendType = "auto"
+	ReconnectingPTYBackendTypeScreen   ReconnectingPTYBackendType = "screen"
+	ReconnectingPTYBackendTypeBuffered ReconnectingPTYBackendType = "buffered"
+)
+
 // WorkspaceAgentReconnectingPTYInit initializes a new reconnecting PTY session.
 // @typescript-ignore WorkspaceAgentReconnectingPTYInit
 type WorkspaceAgentReconnectingPTYInit struct {
-	ID      uuid.UUID
-	Height  uint16
-	Width   uint16
-	Command string
+	ID          uuid.UUID
+	Height      uint16
+	Width       uint16
+	Command     string
+	BackendType ReconnectingPTYBackendType
 }
 
 // ReconnectingPTYRequest is sent from the client to the server
@@ -214,7 +223,7 @@ type ReconnectingPTYRequest struct {
 // ReconnectingPTY spawns a new reconnecting terminal session.
 // `ReconnectingPTYRequest` should be JSON marshaled and written to the returned net.Conn.
 // Raw terminal output will be read from the returned net.Conn.
-func (c *WorkspaceAgentConn) ReconnectingPTY(ctx context.Context, id uuid.UUID, height, width uint16, command string) (net.Conn, error) {
+func (c *WorkspaceAgentConn) ReconnectingPTY(ctx context.Context, id uuid.UUID, height, width uint16, command string, backendType ReconnectingPTYBackendType) (net.Conn, error) {
 	ctx, span := tracing.StartSpan(ctx)
 	defer span.End()
 
@@ -227,10 +236,11 @@ func (c *WorkspaceAgentConn) ReconnectingPTY(ctx context.Context, id uuid.UUID, 
 		return nil, err
 	}
 	data, err := json.Marshal(WorkspaceAgentReconnectingPTYInit{
-		ID:      id,
-		Height:  height,
-		Width:   width,
-		Command: command,
+		ID:          id,
+		Height:      height,
+		Width:       width,
+		Command:     command,
+		BackendType: backendType,
 	})
 	if err != nil {
 		_ = conn.Close()

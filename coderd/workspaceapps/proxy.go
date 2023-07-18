@@ -671,7 +671,7 @@ func (s *Server) workspaceAgentPTY(rw http.ResponseWriter, r *http.Request) {
 	defer release()
 	defer agentConn.Close()
 	log.Debug(ctx, "dialed workspace agent")
-	ptNetConn, err := agentConn.ReconnectingPTY(ctx, reconnect, uint16(height), uint16(width), r.URL.Query().Get("command"))
+	ptNetConn, err := agentConn.ReconnectingPTY(ctx, reconnect, uint16(height), uint16(width), r.URL.Query().Get("command"), codersdk.ReconnectingPTYBackendTypeAuto)
 	if err != nil {
 		log.Debug(ctx, "dial reconnecting pty server in workspace agent", slog.Error(err))
 		_ = conn.Close(websocket.StatusInternalError, httpapi.WebsocketCloseSprintf("dial: %s", err))

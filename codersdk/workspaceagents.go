@@ -481,11 +481,12 @@ func (c *Client) IssueReconnectingPTYSignedToken(ctx context.Context, req IssueR
 
 // @typescript-ignore:WorkspaceAgentReconnectingPTYOpts
 type WorkspaceAgentReconnectingPTYOpts struct {
-	AgentID   uuid.UUID
-	Reconnect uuid.UUID
-	Width     uint16
-	Height    uint16
-	Command   string
+	AgentID     uuid.UUID
+	Reconnect   uuid.UUID
+	Width       uint16
+	Height      uint16
+	Command     string
+	BackendType ReconnectingPTYBackendType
 
 	// SignedToken is an optional signed token from the
 	// issue-reconnecting-pty-signed-token endpoint. If set, the session token
